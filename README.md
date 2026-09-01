@@ -116,18 +116,23 @@ Tests focus on business and trust-boundary behavior rather than an arbitrary cov
 
 Schema changes are migration-tested against PostgreSQL and checked for Alembic drift. AI behavior has separate versioned synthetic evaluation suites so model, prompt, tool-contract, and dataset changes can be assessed without household data.
 
-## Screenshots and demo
+## Interface
 
-Screenshots are intentionally not committed yet. Before publishing the portfolio, capture only synthetic data and add:
+All interface images use independently created synthetic household data.
 
-| View | Suggested asset |
-| --- | --- |
-| Document archive and metadata | `docs/images/document-archive.png` |
-| Cited document answer | `docs/images/cited-answer.png` |
-| Transaction import and deterministic total | `docs/images/financial-workspace.png` |
-| Architecture overview | Export of the Mermaid diagram above |
+### Document archive
 
-See the [portfolio and demo guide](docs/PORTFOLIO_GUIDE.md) for a 2–3 minute walkthrough and interview talking points.
+The document-first workspace combines collections, normalized metadata, extracted facts, key dates,
+an inline PDF preview, and lifecycle actions without exposing private blob paths.
+
+![Document archive populated with synthetic household records](docs/images/document-archive.png)
+
+### Provenance-aware document search
+
+Lexical search returns a bounded excerpt, the synthetic source filename, and its page number while
+keeping the selected document and extracted metadata visible for verification.
+
+![Document search returning a bounded synthetic warranty excerpt](docs/images/document-search.png)
 
 ## Run locally
 
@@ -233,7 +238,7 @@ The next enterprise-AI evolution should build on the existing control plane rath
 2. **Durable orchestration and approvals:** persist workflow steps and checkpoints so future mutation tools require an explicit human approval and can resume safely after failure.
 3. **Operational AI observability:** add privacy-safe traces for retrieval, tool calls, latency, token use, model/prompt versions, refusals, and evaluation outcomes.
 
-Potential embeddings, reranking, additional document types, and multi-agent roles should be introduced only when synthetic evaluation demonstrates measurable value. See [docs/ROADMAP.md](docs/ROADMAP.md) for the milestone history and [docs/PORTFOLIO_GUIDE.md](docs/PORTFOLIO_GUIDE.md) for scoped enhancement proposals.
+Potential embeddings, reranking, additional document types, and multi-agent roles should be introduced only when synthetic evaluation demonstrates measurable value. See [docs/ROADMAP.md](docs/ROADMAP.md) for the milestone history.
 
 ## Repository map
 
