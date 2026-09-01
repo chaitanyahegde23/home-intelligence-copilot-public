@@ -1,0 +1,12 @@
+Synthetic statement export
+Synthetic household account
+Synthetic statement period
+Synthetic metadata record
+Synthetic balances section
+
+Date,Description,Amount,Running Bal.
+06/01/2026,Beginning balance as of 06/01/2026,,"1,000.00"
+06/03/2026,Example Grocery Store,-82.45,917.55
+06/05/2026,"Example Cafe, Downtown",-18.40,899.15
+06/10/2026,Example Deposit,"1,250.00","2,149.15"
+06/12/2026,Example Utility Payment,-75.25,"2,073.90"

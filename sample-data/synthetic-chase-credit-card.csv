@@ -1,0 +1,5 @@
+Transaction Date,Post Date,Description,Category,Type,Amount,Memo
+06/03/2026,06/04/2026,Example Grocery Store,Groceries,Sale,-82.45,
+06/08/2026,06/09/2026,"Example Cafe, Downtown",Dining,Sale,-18.40,
+06/12/2026,06/13/2026,Example Merchandise Return,,Return,7.15,
+06/20/2026,06/21/2026,Example Card Payment,,Payment,250.00,

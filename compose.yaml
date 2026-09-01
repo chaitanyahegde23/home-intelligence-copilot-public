@@ -1,0 +1,117 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-home_intelligence}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+      POSTGRES_DB: ${POSTGRES_DB:-home_intelligence}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-home_intelligence} -d ${POSTGRES_DB:-home_intelligence}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+    environment:
+      APP_NAME: ${APP_NAME:-Home Intelligence Copilot API}
+      APP_ENV: ${APP_ENV:-development}
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-home_intelligence}:${POSTGRES_PASSWORD:-local-development-only}@db:5432/${POSTGRES_DB:-home_intelligence}
+      DOCUMENT_STORAGE_ROOT: /var/lib/home-intelligence/documents
+      MAX_DOCUMENT_SIZE_BYTES: ${MAX_DOCUMENT_SIZE_BYTES:-20971520}
+      MAX_DOCUMENT_PAGES: ${MAX_DOCUMENT_PAGES:-500}
+      MAX_DOCUMENT_TEXT_CHARS: ${MAX_DOCUMENT_TEXT_CHARS:-2000000}
+      DOCUMENT_OCR_ENABLED: ${DOCUMENT_OCR_ENABLED:-true}
+      DOCUMENT_OCR_LANGUAGE: ${DOCUMENT_OCR_LANGUAGE:-eng}
+      DOCUMENT_OCR_TIMEOUT_SECONDS: ${DOCUMENT_OCR_TIMEOUT_SECONDS:-120}
+      DOCUMENT_EXTRACTION_STALE_SECONDS: ${DOCUMENT_EXTRACTION_STALE_SECONDS:-300}
+      DOCUMENT_CHUNK_MAX_CHARS: ${DOCUMENT_CHUNK_MAX_CHARS:-1000}
+      GMAIL_INGESTION_ENABLED: ${GMAIL_INGESTION_ENABLED:-false}
+      GMAIL_CLIENT_ID: ${GMAIL_CLIENT_ID:-}
+      GMAIL_CLIENT_SECRET: ${GMAIL_CLIENT_SECRET:-}
+      GMAIL_REFRESH_TOKEN: ${GMAIL_REFRESH_TOKEN:-}
+      GMAIL_INGESTION_HOUSEHOLD_ID: ${GMAIL_INGESTION_HOUSEHOLD_ID:-00000000-0000-4000-8000-000000000001}
+      GMAIL_ALLOWED_SENDERS: ${GMAIL_ALLOWED_SENDERS_JSON:-[]}
+      GMAIL_REQUIRE_AUTHENTICATED_SENDER: ${GMAIL_REQUIRE_AUTHENTICATED_SENDER:-true}
+      GMAIL_SEARCH_QUERY: ${GMAIL_SEARCH_QUERY:-has:attachment filename:pdf -label:HIC/Imported -label:HIC/Failed}
+      GMAIL_PROCESSED_LABEL: ${GMAIL_PROCESSED_LABEL:-HIC/Imported}
+      GMAIL_FAILED_LABEL: ${GMAIL_FAILED_LABEL:-HIC/Failed}
+      GMAIL_POLL_INTERVAL_SECONDS: ${GMAIL_POLL_INTERVAL_SECONDS:-300}
+      GMAIL_MAX_MESSAGES_PER_POLL: ${GMAIL_MAX_MESSAGES_PER_POLL:-25}
+      GMAIL_INGESTION_STALE_SECONDS: ${GMAIL_INGESTION_STALE_SECONDS:-900}
+      GMAIL_MAX_ATTEMPTS: ${GMAIL_MAX_ATTEMPTS:-5}
+      HOUSEHOLD_TIMEZONE: ${HOUSEHOLD_TIMEZONE:-America/Los_Angeles}
+      FINANCIAL_FEATURES_ENABLED: ${FINANCIAL_FEATURES_ENABLED:-false}
+      AUTH_MODE: ${AUTH_MODE:-local}
+      AUTH_ALLOWED_ORIGIN: ${AUTH_ALLOWED_ORIGIN:-http://localhost:5173}
+      AUTH_ALLOWED_HOSTS: ${AUTH_ALLOWED_HOSTS_JSON:-["localhost:8000","127.0.0.1:8000"]}
+      AUTH_SESSION_IDLE_SECONDS: ${AUTH_SESSION_IDLE_SECONDS:-1800}
+      AUTH_SESSION_ABSOLUTE_SECONDS: ${AUTH_SESSION_ABSOLUTE_SECONDS:-43200}
+      AUTH_SESSION_TOUCH_INTERVAL_SECONDS: ${AUTH_SESSION_TOUCH_INTERVAL_SECONDS:-60}
+      AUTH_LOGIN_ATTEMPT_LIMIT: ${AUTH_LOGIN_ATTEMPT_LIMIT:-5}
+      AUTH_LOGIN_WINDOW_SECONDS: ${AUTH_LOGIN_WINDOW_SECONDS:-300}
+      AI_ENABLED: ${AI_ENABLED:-false}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5.6-luna}
+      OPENAI_TIMEOUT_SECONDS: ${OPENAI_TIMEOUT_SECONDS:-20}
+      OPENAI_MAX_OUTPUT_TOKENS: ${OPENAI_MAX_OUTPUT_TOKENS:-600}
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app/app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./data/documents:/var/lib/home-intelligence/documents
+    depends_on:
+      db:
+        condition: service_healthy
+
+  gmail-worker:
+    build:
+      context: ./backend
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-home_intelligence}:${POSTGRES_PASSWORD:-local-development-only}@db:5432/${POSTGRES_DB:-home_intelligence}
+      DOCUMENT_STORAGE_ROOT: /var/lib/home-intelligence/documents
+      MAX_DOCUMENT_SIZE_BYTES: ${MAX_DOCUMENT_SIZE_BYTES:-20971520}
+      MAX_DOCUMENT_PAGES: ${MAX_DOCUMENT_PAGES:-500}
+      MAX_DOCUMENT_TEXT_CHARS: ${MAX_DOCUMENT_TEXT_CHARS:-2000000}
+      DOCUMENT_OCR_ENABLED: ${DOCUMENT_OCR_ENABLED:-true}
+      DOCUMENT_OCR_LANGUAGE: ${DOCUMENT_OCR_LANGUAGE:-eng}
+      DOCUMENT_OCR_TIMEOUT_SECONDS: ${DOCUMENT_OCR_TIMEOUT_SECONDS:-120}
+      DOCUMENT_EXTRACTION_STALE_SECONDS: ${DOCUMENT_EXTRACTION_STALE_SECONDS:-300}
+      DOCUMENT_CHUNK_MAX_CHARS: ${DOCUMENT_CHUNK_MAX_CHARS:-1000}
+      GMAIL_INGESTION_ENABLED: ${GMAIL_INGESTION_ENABLED:-false}
+      GMAIL_CLIENT_ID: ${GMAIL_CLIENT_ID:-}
+      GMAIL_CLIENT_SECRET: ${GMAIL_CLIENT_SECRET:-}
+      GMAIL_REFRESH_TOKEN: ${GMAIL_REFRESH_TOKEN:-}
+      GMAIL_INGESTION_HOUSEHOLD_ID: ${GMAIL_INGESTION_HOUSEHOLD_ID:-00000000-0000-4000-8000-000000000001}
+      GMAIL_ALLOWED_SENDERS: ${GMAIL_ALLOWED_SENDERS_JSON:-[]}
+      GMAIL_REQUIRE_AUTHENTICATED_SENDER: ${GMAIL_REQUIRE_AUTHENTICATED_SENDER:-true}
+      GMAIL_SEARCH_QUERY: ${GMAIL_SEARCH_QUERY:-has:attachment filename:pdf -label:HIC/Imported -label:HIC/Failed}
+      GMAIL_PROCESSED_LABEL: ${GMAIL_PROCESSED_LABEL:-HIC/Imported}
+      GMAIL_FAILED_LABEL: ${GMAIL_FAILED_LABEL:-HIC/Failed}
+      GMAIL_POLL_INTERVAL_SECONDS: ${GMAIL_POLL_INTERVAL_SECONDS:-300}
+      GMAIL_MAX_MESSAGES_PER_POLL: ${GMAIL_MAX_MESSAGES_PER_POLL:-25}
+      GMAIL_INGESTION_STALE_SECONDS: ${GMAIL_INGESTION_STALE_SECONDS:-900}
+      GMAIL_MAX_ATTEMPTS: ${GMAIL_MAX_ATTEMPTS:-5}
+    command: python -m app.gmail_worker
+    volumes:
+      - ./backend:/app
+      - ./data/documents:/var/lib/home-intelligence/documents
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - gmail
+
+volumes:
+  postgres_data:

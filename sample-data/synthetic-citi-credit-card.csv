@@ -1,0 +1,5 @@
+Status,Date,Description,Debit,Credit,Member Name
+Cleared,02/11/2026,Example Grocery Store,47.25,,Sample Household Member
+Cleared,02/14/2026,"Example Cafe, Downtown",18.40,,Sample Household Member
+Cleared,02/18/2026,Example Merchant Refund,,7.15,Sample Household Member
+Cleared,02/22/2026,Example Card Payment,,250.00,Sample Household Member

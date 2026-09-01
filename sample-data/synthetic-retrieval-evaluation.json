@@ -1,0 +1,35 @@
+{
+  "version": "1",
+  "documents": [
+    {
+      "reference": "warranty",
+      "filename": "synthetic-warranty-evaluation.pdf",
+      "text": "Example Home Services provides the synthetic household warranty. The annual warranty cost is $480.00. Covered service items include a refrigerator repair and water-heater service."
+    },
+    {
+      "reference": "utility",
+      "filename": "synthetic-utility-evaluation.pdf",
+      "text": "Example Electric Utility issued the synthetic July statement. Household electricity usage was 620 kWh. The synthetic amount due is $91.25."
+    }
+  ],
+  "cases": [
+    {
+      "query": "Which service provides the household warranty?",
+      "expected_reference": "warranty",
+      "expected_phrase": "Example Home Services"
+    },
+    {
+      "query": "What is the annual warranty cost?",
+      "expected_reference": "warranty",
+      "expected_phrase": "$480.00"
+    },
+    {
+      "query": "How many kWh were used for electricity?",
+      "expected_reference": "utility",
+      "expected_phrase": "620 kWh"
+    }
+  ],
+  "no_result_queries": [
+    "mortgage interest escrow"
+  ]
+}
