@@ -134,6 +134,14 @@ keeping the selected document and extracted metadata visible for verification.
 
 ![Document search returning a bounded synthetic warranty excerpt](docs/images/document-search.png)
 
+### Controlled Copilot
+
+Financial questions are routed through an allowlisted, read-only analytics tool. The application
+calculates the result deterministically and exposes the validated arguments and evidence alongside
+the optional model explanation.
+
+![Controlled Copilot showing a verified synthetic spending answer and deterministic evidence](docs/images/controlled-copilot.png)
+
 ## Run locally
 
 ### Prerequisites
